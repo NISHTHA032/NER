@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NER/Token Classification UI</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 200px;
+        margin-bottom: 10px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        resize: vertical;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    #result {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Named Entity Recognition / Token Classification</h1>
+    <p>Enter text below:</p>
+    <textarea id="inputText" placeholder="Enter text..."></textarea>
+    <button onclick="performNER()">Analyze Text</button>
+    <div id="result">
+        <h2>Skills:</h2>
+        <p id="outputText"></p>
+    </div>
+</div>
+
+<script>
+    function performNER() {
+        var inputText = document.getElementById("inputText").value;
+
+        // Make an AJAX request to the Flask backend
+        fetch('/perform_ner', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ inputText: inputText })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display the analyzed skills
+            var outputText = data.skills.join(", ");
+            document.getElementById("outputText").innerText = outputText;
+            
+            // Display the result container
+            document.getElementById("result").style.display = "block";
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
+</body>
+</html>
